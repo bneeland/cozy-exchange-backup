@@ -10,12 +10,13 @@ import {
   Button,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
+import { randomize, randomizePeople, getVectors } from '../helpers/assign'
 
 const emptyPersonInput = { name: '', email: '' }
 const emptyRuleInput = { from: '', to: '', type: '' }
 const ruleTypes = [
-  { id: 'must', label: 'must give to' },
-  { id: 'mustNot', label: 'must not give to' },
+  { id: 'inclusion', label: 'must give to' },
+  { id: 'exclusion', label: 'must not give to' },
 ]
 
 export default function Home() {
@@ -24,16 +25,25 @@ export default function Home() {
   const [ruleInput, setRuleInput] = useState(emptyRuleInput)
   const [rules, setRules] = useState([])
 
-  const createPersonHandler = (e) => {
+  function createPersonHandler(e) {
     e.preventDefault()
     setPeople([...people, personInput])
     setPersonInput(emptyPersonInput)
   }
 
-  const createRuleHandler = (e) => {
+  function createRuleHandler(e) {
     e.preventDefault()
     setRules([...rules, ruleInput])
     setRuleInput(emptyRuleInput)
+  }
+
+  function assignHandler() {
+    const randomizedPeople = randomizePeople(people)
+    console.log('randomizedPeople')
+    console.log(randomizedPeople)
+    const vectors = getVectors(randomizedPeople, rules)
+    console.log('vectors')
+    console.log(vectors)
   }
 
   return (
@@ -81,9 +91,6 @@ export default function Home() {
           ))}
         </div>
         <div>Create rule</div>
-        <div>{ruleInput.from}</div>
-        <div>{ruleInput.to}</div>
-        <div>{ruleInput.type}</div>
         <form onSubmit={createRuleHandler}>
           <FormControl isRequired>
             <FormLabel>From</FormLabel>
@@ -112,6 +119,7 @@ export default function Home() {
           <Button type="submit">Submit</Button>
         </form>
       </div>
+      <Button onClick={assignHandler}>Assign</Button>
     </div>
   )
 }
