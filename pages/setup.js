@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { randomize, randomizePeople, getVectors } from '../helpers/assign'
+import axios from 'axios'
 
 const emptyPersonInput = { name: '', email: '' }
 const emptyRuleInput = { from: '', to: '', type: '' }
@@ -45,6 +46,25 @@ export default function Home() {
     console.log('vectors')
     console.log(vectors)
   }
+
+
+
+  async function sendEmail() {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: '/api/email',
+      })
+
+      if (response.status === 200) {
+        console.log('Email success')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
 
   return (
     <div>
@@ -120,6 +140,8 @@ export default function Home() {
         </form>
       </div>
       <Button onClick={assignHandler}>Assign</Button>
+      <hr />
+      <Button onClick={sendEmail}>Send email</Button>
     </div>
   )
 }
