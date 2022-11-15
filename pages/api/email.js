@@ -6,14 +6,14 @@ export default async function handler(request, response) {
   try {
     await client.sendEmail({
       'From': 'hello@simplegiftsapp.com',
-      'To': 'brian.neeland@protonmail.com',
+      'To': request.body.fromEmail,
       'Subject': `Your match for the ${request.body.exchangeName} gift exchange!`,
       'HtmlBody': `
         <div><b>Your match for the ${request.body.exchangeName} gift exchange!</b></div>
-        <div>Dear ${request.body.from},</div>
+        <div>Hello ${request.body.fromName},</div>
         <div>Here is your match for the ${request.body.exchangeName} gift exchange:</div>
-        <div><b>${request.body.to}</b></div>
-        <div>You will give a gift to ${request.body.to}, and someone will give you a gift as part of the exchange!</div>
+        <div><b>${request.body.toName}</b></div>
+        <div>You will give a gift to ${request.body.toName}, and someone will give you a gift as part of the exchange!</div>
         <div>If you have any questions, the person to contact is ${request.body.contactName} at ${request.body.contactEmail}.</div>
       `,
       'TextBody': '',

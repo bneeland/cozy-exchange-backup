@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { randomize, randomizePeople, getVectors } from '../helpers/assign'
-import axios from 'axios'
+import { sendEmail } from '../helpers/sendEmail'
 
 const emptyPersonInput = { name: '', email: '' }
 const emptyRuleInput = { from: '', to: '', type: '' }
@@ -21,10 +21,30 @@ const ruleTypes = [
 ]
 
 export default function Home() {
+  const [exchangeNameInput, setExchangeNameInput] = useState('')
+  const [exchangeName, setExchangeName] = useState('')
+  const [contactNameInput, setContactNameInput] = useState('')
+  const [contactName, setContactName] = useState('')
+  const [contactEmailInput, setContactEmailInput] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
   const [personInput, setPersonInput] = useState(emptyPersonInput)
   const [people, setPeople] = useState([])
   const [ruleInput, setRuleInput] = useState(emptyRuleInput)
   const [rules, setRules] = useState([])
+
+  function setExchangeHandler(e) {
+    e.preventDefault()
+    setExchangeName(exchangeNameInput)
+    setExchangeNameInput('')
+  }
+
+  function setContactHandler(e) {
+    e.preventDefault()
+    setContactName(contactNameInput)
+    setContactEmail(contactEmailInput)
+    setContactNameInput('')
+    setContactEmailInput('')
+  }
 
   function createPersonHandler(e) {
     e.preventDefault()
@@ -38,33 +58,24 @@ export default function Home() {
     setRuleInput(emptyRuleInput)
   }
 
+  function getPerson(email) {
+    return people.find(person => person.email === email)
+  }
+
   function assignHandler() {
     const randomizedPeople = randomizePeople(people)
-    console.log('randomizedPeople')
-    console.log(randomizedPeople)
     const vectors = getVectors(randomizedPeople, rules)
-    console.log('vectors')
-    console.log(vectors)
+    vectors.forEach(vector => {
+      sendEmail(
+        vector.from,
+        getPerson(vector.from).name,
+        getPerson(vector.to).name,
+        exchangeName,
+        contactName,
+        contactEmail,
+      )
+    })
   }
-
-
-
-  async function sendEmail() {
-    try {
-      const response = await axios({
-        method: 'post',
-        url: '/api/email',
-      })
-
-      if (response.status === 200) {
-        console.log('Email success')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-
 
   return (
     <div>
@@ -74,6 +85,35 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>Gift exchange config</div>
+      <div>
+        <div>Group settings</div>
+        <div>{exchangeName}</div>
+        <div>{contactName}</div>
+        <div>{contactEmail}</div>
+        <div>Set exchange name</div>
+        <form onSubmit={setExchangeHandler}>
+          <FormControl isRequired>
+            <FormLabel>Exchange name</FormLabel>
+            <Input type="text" placeholder="Christmas 2022" value={exchangeNameInput} onChange={(e) => setExchangeNameInput(e.target.value)} />
+            <FormHelperText>The name can be anything you like.</FormHelperText>
+          </FormControl>
+          <Button type="submit">Submit</Button>
+        </form>
+        <div>Set contact info</div>
+        <form onSubmit={setContactHandler}>
+          <FormControl isRequired>
+            <FormLabel>Contact name</FormLabel>
+            <Input type="text" placeholder="Jane Doe" value={contactNameInput} onChange={(e) => setContactNameInput(e.target.value)} />
+            <FormHelperText>This will be the person who can answer questions about this gift exchange.</FormHelperText>
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Contact email</FormLabel>
+            <Input type="email" placeholder="jane.doe@example.com" value={contactEmailInput} onChange={(e) => setContactEmailInput(e.target.value)} />
+            <FormHelperText>The name can be anything you like.</FormHelperText>
+          </FormControl>
+          <Button type="submit">Submit</Button>
+        </form>
+      </div>
       <div>
         <div>People</div>
         <div>
@@ -140,8 +180,6 @@ export default function Home() {
         </form>
       </div>
       <Button onClick={assignHandler}>Assign</Button>
-      <hr />
-      <Button onClick={sendEmail}>Send email</Button>
     </div>
   )
 }

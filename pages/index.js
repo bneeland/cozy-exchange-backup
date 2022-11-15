@@ -11,7 +11,7 @@ export default function Home() {
         <meta name="description" content="Draw names for a gift exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div><Link href="setup">Start</Link></div>
+      <div><Link href="app">Start</Link></div>
     </div>
   )
 }
