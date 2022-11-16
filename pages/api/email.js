@@ -7,14 +7,15 @@ export default async function handler(request, response) {
     await client.sendEmail({
       'From': 'hello@simplegiftsapp.com',
       'To': request.body.fromEmail,
-      'Subject': `Your match for the ${request.body.exchangeName} gift exchange!`,
+      'Subject': request.body.exchangeName ? `Your match for the ${request.body.exchangeName} gift exchange!` : 'Your match for a gift exchange!',
       'HtmlBody': `
-        <div><b>Your match for the ${request.body.exchangeName} gift exchange!</b></div>
+        <div><b>${request.body.exchangeName ? `Your match for the ${request.body.exchangeName} gift exchange!` : 'Your match for a gift exchange!'}</b></div>
         <div>Hello ${request.body.fromName},</div>
-        <div>Here is your match for the ${request.body.exchangeName} gift exchange:</div>
+        <div>${request.body.exchangeName ? `Here is your match for the ${request.body.exchangeName} gift exchange:` : 'You have been matched for a gift exchange. Here is your match:'}</div>
         <div><b>${request.body.toName}</b></div>
         <div>You will give a gift to ${request.body.toName}, and someone will give you a gift as part of the exchange!</div>
-        <div>If you have any questions, the person to contact is ${request.body.contactName} at ${request.body.contactEmail}.</div>
+        ${request.body.contactName && request.body.contactEmail && `<div>If you have any questions, the person to contact is ${request.body.contactName} at ${request.body.contactEmail}.</div>`}
+        <div><small>Powered by <a href="https://www.giftexchanger.io">giftexchanger.io</a></small</div>
       `,
       'TextBody': '',
       'MessageStream': 'outbound'
