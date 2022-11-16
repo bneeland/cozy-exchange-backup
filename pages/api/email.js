@@ -15,7 +15,11 @@ export default async function handler(request, response) {
         <div><b>${request.body.toName}</b></div>
         <div>You will give a gift to ${request.body.toName}, and someone will give you a gift as part of the exchange!</div>
         ${request.body.contactName && request.body.contactEmail && `<div>If you have any questions, the person to contact is ${request.body.contactName} at ${request.body.contactEmail}.</div>`}
-        <div><small>Powered by <a href="https://www.giftexchanger.io">giftexchanger.io</a></small</div>
+        ${request.body.message && `
+          <div>Here is an extra message from the person who set up this exchange:</div>
+          <div><blockquote>${request.body.message}</blockquote></div>
+        `}
+        <div><small>Powered by <a href="https://www.exchanging.gifts">exchanging.gifts</a></small</div>
       `,
       'TextBody': '',
       'MessageStream': 'outbound'
