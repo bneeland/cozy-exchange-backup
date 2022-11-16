@@ -118,7 +118,7 @@ export default function Home() {
           <FormControl isRequired>
             <FormLabel>Contact email</FormLabel>
             <Input type="email" placeholder="jane.doe@example.com" value={contactEmailInput} onChange={(e) => setContactEmailInput(e.target.value)} />
-            <FormHelperText>The name can be anything you like.</FormHelperText>
+            <FormHelperText>Make sure this email is active.</FormHelperText>
           </FormControl>
           <Button type="submit">Submit</Button>
         </form>
@@ -193,7 +193,7 @@ export default function Home() {
       <div>
         {message}
       </div>
-      <div>Create message</div>
+      <div>Set message</div>
         <form onSubmit={createMessageHandler}>
           <FormControl isRequired>
             <FormLabel>Message</FormLabel>
