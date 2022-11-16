@@ -5,7 +5,7 @@ var client = new postmark.ServerClient(process.env.POSTMARK_SERVER_API_TOKEN)
 export default async function handler(request, response) {
   try {
     await client.sendEmail({
-      'From': 'hello@simplegiftsapp.com',
+      'From': 'hello@exchanging.gifts',
       'To': request.body.fromEmail,
       'Subject': request.body.exchangeName ? `Your match for the ${request.body.exchangeName} gift exchange!` : 'Your match for a gift exchange!',
       'HtmlBody': `
