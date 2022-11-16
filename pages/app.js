@@ -1,4 +1,3 @@
-import { TITLE_PREFIX } from '../constants'
 import Head from 'next/head'
 import {
   Input,
@@ -90,7 +89,7 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Simple Gifts - People</title>
+        <title>Exchanging.gifts - App</title>
         <meta name="description" content="Draw names for a gift exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

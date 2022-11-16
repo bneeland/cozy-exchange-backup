@@ -1,7 +1,7 @@
 export default function Header() {
   return (
     <div>
-      Simple Gifts
+      Exchanging.gifts
     </div>
   )
 }
