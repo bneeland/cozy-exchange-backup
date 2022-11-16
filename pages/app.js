@@ -3,6 +3,7 @@ import Head from 'next/head'
 import {
   Input,
   Select,
+  Textarea,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -31,6 +32,8 @@ export default function Home() {
   const [people, setPeople] = useState([])
   const [ruleInput, setRuleInput] = useState(emptyRuleInput)
   const [rules, setRules] = useState([])
+  const [messageInput, setMessageInput] = useState('')
+  const [message, setMessage] = useState('')
 
   function setExchangeHandler(e) {
     e.preventDefault()
@@ -58,6 +61,12 @@ export default function Home() {
     setRuleInput(emptyRuleInput)
   }
 
+  function createMessageHandler(e) {
+    e.preventDefault()
+    setMessage(messageInput)
+    setMessageInput('')
+  }
+
   function getPerson(email) {
     return people.find(person => person.email === email)
   }
@@ -73,6 +82,7 @@ export default function Home() {
         exchangeName,
         contactName,
         contactEmail,
+        message,
       )
     })
   }
@@ -175,6 +185,21 @@ export default function Home() {
                 <option value={ruleTypes.id} key={ruleTypes.id}>{ruleTypes.label}</option>
               ))}
             </Select>
+          </FormControl>
+          <Button type="submit">Submit</Button>
+        </form>
+      </div>
+      <div>
+      <div>Message</div>
+      <div>
+        {message}
+      </div>
+      <div>Create message</div>
+        <form onSubmit={createMessageHandler}>
+          <FormControl isRequired>
+            <FormLabel>Message</FormLabel>
+            <Textarea placeholder="Write an optional message here…" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} />
+            <FormHelperText>For example, tell your group what the price range is, or what date and time you'll be exchanging your gifts.</FormHelperText>
           </FormControl>
           <Button type="submit">Submit</Button>
         </form>
