@@ -20,7 +20,7 @@ const ruleTypes = [
   { id: 'exclusion', label: 'must not give to' },
 ]
 
-export default function Home() {
+export default function App() {
   const [exchangeNameInput, setExchangeNameInput] = useState('')
   const [exchangeName, setExchangeName] = useState('')
   const [contactNameInput, setContactNameInput] = useState('')
