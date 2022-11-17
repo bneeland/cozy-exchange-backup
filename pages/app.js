@@ -20,7 +20,7 @@ const ruleTypes = [
   { id: 'exclusion', label: 'must not give to' },
 ]
 
-export default function Home() {
+export default function App() {
   const [exchangeNameInput, setExchangeNameInput] = useState('')
   const [exchangeName, setExchangeName] = useState('')
   const [contactNameInput, setContactNameInput] = useState('')
@@ -72,18 +72,21 @@ export default function Home() {
 
   function assignHandler() {
     const randomizedPeople = randomizePeople(people)
+    console.log('randomizedPeople', randomizedPeople)
+    console.log('rules', rules)
     const vectors = getVectors(randomizedPeople, rules)
-    vectors.forEach(vector => {
-      sendEmail(
-        vector.from,
-        getPerson(vector.from).name,
-        getPerson(vector.to).name,
-        exchangeName,
-        contactName,
-        contactEmail,
-        message,
-      )
-    })
+    console.log('vectors', vectors)
+    // vectors.forEach(vector => {
+    //   sendEmail(
+    //     vector.from,
+    //     getPerson(vector.from).name,
+    //     getPerson(vector.to).name,
+    //     exchangeName,
+    //     contactName,
+    //     contactEmail,
+    //     message,
+    //   )
+    // })
   }
 
   return (

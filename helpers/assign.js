@@ -19,6 +19,7 @@ export function randomizePeople(people) {
 }
 
 export function getVectors(people, rules) {
+  console.log(people, rules)
   let vectors = []
 
   const inclusions = rules.filter(rule => rule.type === 'inclusion')
