@@ -72,21 +72,18 @@ export default function App() {
 
   function assignHandler() {
     const randomizedPeople = randomizePeople(people)
-    console.log('randomizedPeople', randomizedPeople)
-    console.log('rules', rules)
     const vectors = getVectors(randomizedPeople, rules)
-    console.log('vectors', vectors)
-    // vectors.forEach(vector => {
-    //   sendEmail(
-    //     vector.from,
-    //     getPerson(vector.from).name,
-    //     getPerson(vector.to).name,
-    //     exchangeName,
-    //     contactName,
-    //     contactEmail,
-    //     message,
-    //   )
-    // })
+    vectors.forEach(vector => {
+      sendEmail(
+        vector.from,
+        getPerson(vector.from).name,
+        getPerson(vector.to).name,
+        exchangeName,
+        contactName,
+        contactEmail,
+        message,
+      )
+    })
   }
 
   return (
