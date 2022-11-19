@@ -3,7 +3,7 @@ name: Run test
 on: pull_request
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: git checkout
