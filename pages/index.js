@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { CircularProgress } from '@chakra-ui/react'
+import { Center } from '@chakra-ui/react'
 
 export default function Home() {
   return (
@@ -10,7 +10,9 @@ export default function Home() {
         <meta name="description" content="Draw names for a gift exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div><Link href="app">Start</Link></div>
+      <Center>
+        <Link href="app">Start</Link>
+      </Center>
     </div>
   )
 }
