@@ -1,12 +1,15 @@
 import Header from './header'
 import Footer from './footer'
+import { Flex, Box, Spacer } from '@chakra-ui/react'
 
 export default function Layout({ children }) {
   return (
-    <div>
+    <Flex direction="column" minH="100vh">
       <Header />
-      {children}
+      <Spacer mt="40px" />
+      <Box>{children}</Box>
+      <Spacer />
       <Footer />
-    </div>
+    </Flex>
   )
 }

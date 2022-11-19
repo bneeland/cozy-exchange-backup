@@ -8,6 +8,7 @@ import {
   FormErrorMessage,
   FormHelperText,
   Button,
+  Flex,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { randomize, randomizePeople, getVectors } from '../helpers/assign'
