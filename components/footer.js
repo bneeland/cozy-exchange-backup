@@ -3,8 +3,8 @@ import Logo from './logo'
 
 export default function Footer() {
   return (
-    <Center padding="24px" zIndex="overlay" background="white">
-      <Logo isDark />
+    <Center padding="12px">
+      <Logo isLight />
     </Center>
   )
 }

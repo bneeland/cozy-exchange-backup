@@ -8,8 +8,8 @@ export default function Layout({ children }) {
     <Flex direction="column" h="100vh">
       <Background />
       <Header />
-      <Spacer mt="60px" />
-      <Flex direction="column" gap="24px" maxW="768" marginX="auto" paddingX="24px" paddingY="48px" zIndex="base">
+      <Spacer />
+      <Flex direction="column" gap="24px" maxW="768" marginX="auto" padding="24px" zIndex="base">
         {children}
       </Flex>
       <Spacer />
