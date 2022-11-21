@@ -1,7 +1,7 @@
 import Header from './header'
 import Footer from './footer'
 import { Flex, Box, Spacer } from '@chakra-ui/react'
-import Background from './background.jsx'
+import Background from './background'
 
 export default function Layout({ children }) {
   return (
