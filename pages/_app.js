@@ -4,6 +4,7 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 
 const theme = extendTheme({
   fonts: {
+    heading: `'Asap', sans-serif`,
     body: `'Asap', sans-serif`,
   },
 })

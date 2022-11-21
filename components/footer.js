@@ -1,7 +1,10 @@
+import { Center } from '@chakra-ui/react'
+import Logo from './logo'
+
 export default function Footer() {
   return (
-    <div>
-      Exchanging.gifts
-    </div>
+    <Center padding="24px" zIndex="overlay" background="white">
+      <Logo isDark />
+    </Center>
   )
 }
