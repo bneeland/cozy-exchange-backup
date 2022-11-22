@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { Card, CardBody, Flex, Heading, Box, List, ListItem, ListIcon, Button } from '@chakra-ui/react'
-import { UserPlusIcon, WrenchIcon, EnvelopeIcon } from '@heroicons/react/24/solid'
+import { Card, CardBody, Heading, Flex, Box, Button } from '@chakra-ui/react'
+import { PlusSmallIcon } from '@heroicons/react/20/solid'
 
 export default function Home() {
   return (
@@ -13,26 +13,14 @@ export default function Home() {
       </Head>
       <Card background="white">
         <CardBody>
-          <Flex direction="column" alignItems="center" gap="20px">
-            <Heading textAlign="center">Simple tool to set up randomized gift exchanges</Heading>
-            <List marginX="15%">
-              <ListItem color="gray.600">
-                <ListIcon as={UserPlusIcon} color='green.300' />
-                Add people
-              </ListItem>
-              <ListItem color="gray.600">
-                <ListIcon as={WrenchIcon} color='green.300' />
-                Set up matching rules
-              </ListItem>
-              <ListItem color="gray.600">
-                <ListIcon as={EnvelopeIcon} color='green.300' />
-                Randomly assign matches and send secret emails
-              </ListItem>
-            </List>
+          <Heading size="lg">Randomly assign people for a gift exchange</Heading>
+          <Flex alignItems="center"><PlusSmallIcon style={{ height: '20px' }} />Set rules for who should or shouldn't be assigned to whom</Flex>
+          <Flex alignItems="center"><PlusSmallIcon style={{ height: '20px' }} />Sends emails automatically with the name each person is assigned to</Flex>
+          <Box mt="10px">
             <Link href="app">
               <Button>Start</Button>
             </Link>
-          </Flex>
+          </Box>
         </CardBody>
       </Card>
     </>
