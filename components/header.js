@@ -4,7 +4,7 @@ import Logo from './logo'
 export default function Header() {
   return (
     <Center padding="12px">
-      <Logo isLight />
+      <Logo />
     </Center>
   )
 }
