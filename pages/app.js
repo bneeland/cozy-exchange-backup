@@ -14,7 +14,7 @@ import {
   Heading,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { randomize, randomizePeople, getVectors } from '../helpers/assign'
+import { getVectors } from '../helpers/assign'
 import { sendEmail } from '../helpers/sendEmail'
 
 const emptyPersonInput = { name: '', email: '' }
@@ -75,19 +75,23 @@ export default function App() {
   }
 
   function assignHandler() {
-    const randomizedPeople = randomizePeople(people)
-    const vectors = getVectors(randomizedPeople, rules)
-    vectors.forEach(vector => {
-      sendEmail(
-        vector.from,
-        getPerson(vector.from).name,
-        getPerson(vector.to).name,
-        exchangeName,
-        contactName,
-        contactEmail,
-        message,
-      )
-    })
+    const vectors = getVectors(people, rules)
+    if (vectors === -1) {
+      console.log(`Can't generate matches that don't break any of the rules that have been set. Try making the rules less restrictive (hint: there's probably some kind of contradiction in the rules!).`)
+    }
+    else {
+      vectors.forEach(vector => {
+        sendEmail(
+          vector.from,
+          getPerson(vector.from).name,
+          getPerson(vector.to).name,
+          exchangeName,
+          contactName,
+          contactEmail,
+          message,
+        )
+      })
+    }
   }
 
   return (

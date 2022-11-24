@@ -10,7 +10,7 @@ function randomize(arrayIn) {
   return arrayOut
 }
 
-export function randomizePeople(people) {
+function randomizePeople(people) {
   let randomizedPeople = randomize(people)
   randomizedPeople = randomize(randomizedPeople)
   randomizedPeople = randomize(randomizedPeople)
@@ -18,8 +18,9 @@ export function randomizePeople(people) {
   return randomizedPeople
 }
 
-export function getVectors(people, rules) {
-  console.log(people, rules)
+function generateVectors(people, rules) {
+  const randomizedPeople = randomizePeople(people)
+
   let vectors = []
 
   const inclusions = rules.filter(rule => rule.type === 'inclusion')
@@ -35,7 +36,7 @@ export function getVectors(people, rules) {
   let person2
   let index2
 
-  people.forEach((person1, index1) => {
+  for (let [index1, person1] of people.entries()) {
     matched = false
     iterations = 0
     if (!(vectors.some(vector => vector.from === person1.email))) {
@@ -81,9 +82,25 @@ export function getVectors(people, rules) {
               matched = true
             }
           }
+        } else {
+          return -1
         }
       }
     }
-  })
+  }
   return vectors
+}
+
+export function getVectors(people, rules) {
+  const MAX_ATTEMPTS = 10
+  let attemptNumber = 0
+  let vectors
+  while (attemptNumber <= MAX_ATTEMPTS) {
+    vectors = generateVectors(people, rules)
+    if (vectors !== -1) {
+      return vectors
+    }
+    attemptNumber++
+  }
+  return -1
 }
