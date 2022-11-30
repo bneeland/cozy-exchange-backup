@@ -12,10 +12,12 @@ import {
   Card,
   CardBody,
   Heading,
+  Text,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { getVectors } from '../helpers/assign'
 import { sendEmail } from '../helpers/sendEmail'
+import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid'
 
 const emptyPersonInput = { name: '', email: '' }
 const emptyRuleInput = { from: '', to: '', type: '' }
@@ -25,6 +27,7 @@ const ruleTypes = [
 ]
 
 export default function App() {
+  const [exchangeNameStatus, setExchangeNameStatus] = useState('blank')
   const [exchangeNameInput, setExchangeNameInput] = useState('')
   const [exchangeName, setExchangeName] = useState('')
   const [contactNameInput, setContactNameInput] = useState('')
@@ -41,7 +44,7 @@ export default function App() {
   function setExchangeHandler(e) {
     e.preventDefault()
     setExchangeName(exchangeNameInput)
-    setExchangeNameInput('')
+    setExchangeNameStatus('set')
   }
 
   function setContactHandler(e) {
@@ -101,20 +104,27 @@ export default function App() {
         <meta name="description" content="Draw names for a gift exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Card background="white">
-        <CardBody>
-          <Heading size="lg">Group settings</Heading>
-          <div>{exchangeName}</div>
-          <div>{contactName}</div>
-          <div>{contactEmail}</div>
-          <form onSubmit={setExchangeHandler}>
-            <FormControl isRequired>
-              <FormLabel>Exchange name</FormLabel>
-              <Input type="text" placeholder="Christmas 2022" value={exchangeNameInput} onChange={(e) => setExchangeNameInput(e.target.value)} />
-              <FormHelperText>The name can be anything you like.</FormHelperText>
-            </FormControl>
-            <Button type="submit">Submit</Button>
-          </form>
+      <Card background="gray.50" color="gray.900" borderRadius="25px" boxShadow="dark-lg">
+        <CardBody space-y="10px">
+          <Heading size="xs" mb="12px">Group settings</Heading>
+          {exchangeNameStatus === 'blank' && (
+            <Button onClick={() => setExchangeNameStatus('edit')}>Set exchange name</Button>
+          )}
+          {exchangeNameStatus === 'edit' && (
+            <form onSubmit={setExchangeHandler}>
+              <Flex gap="10px">
+                <FormControl isRequired>
+                  <Input variant="unstyled" fontSize="3xl" type="text" placeholder="Group name…" value={exchangeNameInput} onChange={(e) => setExchangeNameInput(e.target.value)} />
+                  <FormHelperText>The name can be anything you like.</FormHelperText>
+                </FormControl>
+                <Button type="submit"><CheckIcon style={{ height: '20px' }} /></Button>
+                <Button onClick={() => exchangeName === '' ? setExchangeNameStatus('blank') : setExchangeNameStatus('set')}><XMarkIcon style={{ height: '20px' }} /></Button>
+              </Flex>
+            </form>
+          )}
+          {exchangeNameStatus === 'set' && (
+            <Text fontSize="3xl" onClick={() => setExchangeNameStatus('edit')}>{exchangeName}</Text>
+          )}
           <div>Set contact info</div>
           <form onSubmit={setContactHandler}>
             <FormControl isRequired>
