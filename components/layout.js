@@ -9,7 +9,7 @@ export default function Layout({ children }) {
       <Background />
       <Header />
       <Spacer />
-      <Flex direction="column" gap="24px" maxW="768" marginX="auto" padding="24px" zIndex="base">
+      <Flex direction="column" gap="24px" maxW="640" marginX="auto" padding="24px" zIndex="base">
         {children}
       </Flex>
       <Spacer />
