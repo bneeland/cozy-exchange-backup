@@ -11,16 +11,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <div>
-          <div>Randomly assign people for a gift exchange</div>
-          <div><PlusSmallIcon style={{ height: '20px' }} />Set rules for who should or shouldn't be assigned to whom</div>
-          <div><PlusSmallIcon style={{ height: '20px' }} />Sends emails automatically with the name each person is assigned to</div>
-          <div>
-            <Link href="app">
-              <button>Start</button>
-            </Link>
-          </div>
-        </div>
+        Main content div
       </div>
     </>
   )

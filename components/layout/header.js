@@ -2,7 +2,7 @@ import Logo from './logo'
 
 export default function Header() {
   return (
-    <div>
+    <div className="flex justify-center">
       <Logo />
     </div>
   )
