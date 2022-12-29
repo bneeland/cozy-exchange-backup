@@ -11,7 +11,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        Main content div
+        <Link href="app">Start</Link>
       </div>
     </>
   )
