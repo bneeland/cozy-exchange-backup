@@ -13,13 +13,15 @@ export default function Layout({ children }) {
       <Header />
       <div className="flex-1 flex overflow-y-auto gap-4">
         <div className="w-40 flex flex-col gap-4">
-          {PANELS.map(panel => (
-            <Button
-              key={panel.id}
-              icon={panel.icon}
-              label={panel.label}
-              callback={() => panelContext.panelDispatch({ payload: panel })}
-            />
+          {PANELS
+            .filter(panel => panel.isShown)
+            .map(panel => (
+              <Button
+                key={panel.id}
+                icon={panel.icon}
+                label={panel.label}
+                callback={() => panelContext.panelDispatch({ payload: panel })}
+              />
           ))}
         </div>
         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl bg-slate-100 border border-t-4">
