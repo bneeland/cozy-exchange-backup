@@ -5,7 +5,7 @@ import {
   BoltIcon,
 } from '@heroicons/react/24/outline'
 
-const ICON_SIZE = 6
+export const ICON_SIZE = 6
 
 export const PANELS = [
   {
