@@ -21,11 +21,12 @@ export default function Layout({ children }) {
                 icon={panel.icon}
                 label={panel.label}
                 callback={() => panelContext.panelDispatch({ payload: panel })}
+                color="gray"
               />
           ))}
         </div>
         <div className="flex-1 flex flex-col overflow-hidden rounded-2xl bg-slate-100 border border-t-4">
-          <div className="overflow-y-auto p-4">
+          <div className="overflow-y-auto px-4 py-12">
             {children}
           </div>
         </div>

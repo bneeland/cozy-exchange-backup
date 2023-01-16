@@ -2,9 +2,14 @@ import Head from 'next/head'
 import { useState, useContext } from 'react'
 import { getVectors } from '../helpers/assign'
 import { sendEmail } from '../helpers/sendEmail'
-import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { CheckIcon, XMarkIcon, QueueListIcon } from '@heroicons/react/24/outline'
 import { PanelContext } from './_app'
 import { PANELS } from '../helpers/constants'
+import Panel from '../components/ui/panel'
+import InputBox from '../components/ui/inputBox'
+import Button from '../components/ui/button'
+import SmallButton from '../components/ui/smallButton'
+import { ICON_SIZE } from '../helpers/constants'
 
 const emptyPersonInput = { name: '', email: '' }
 const emptyRuleInput = { from: '', to: '', type: '' }
@@ -17,6 +22,7 @@ export default function App() {
   const [exchangeNameStatus, setExchangeNameStatus] = useState('blank')
   const [exchangeNameInput, setExchangeNameInput] = useState('')
   const [exchangeName, setExchangeName] = useState('')
+  const [contactStatus, setContactStatus] = useState('blank')
   const [contactNameInput, setContactNameInput] = useState('')
   const [contactName, setContactName] = useState('')
   const [contactEmailInput, setContactEmailInput] = useState('')
@@ -28,22 +34,24 @@ export default function App() {
   const [messageInput, setMessageInput] = useState('')
   const [message, setMessage] = useState('')
 
-  const panel = 'settings'
-
   const panelContext = useContext(PanelContext)
 
-  function setExchangeHandler(e) {
+  function setExchangeSubmitHandler(e) {
     e.preventDefault()
     setExchangeName(exchangeNameInput)
-    setExchangeNameStatus('set')
+    exchangeNameInput === '' ? setExchangeNameStatus('blank') : setExchangeNameStatus('set')
+  }
+
+  function setExchangeCancelHandler() {
+    exchangeName === '' ? setExchangeNameStatus('blank') : setExchangeNameStatus('set')
+    setExchangeNameInput(exchangeName)
   }
 
   function setContactHandler(e) {
     e.preventDefault()
     setContactName(contactNameInput)
     setContactEmail(contactEmailInput)
-    setContactNameInput('')
-    setContactEmailInput('')
+    setContactStatus('set')
   }
 
   function createPersonHandler(e) {
@@ -95,33 +103,136 @@ export default function App() {
         <meta name="description" content="Draw names for a gift exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {panelContext.panelState === PANELS[0] && (
+        <Panel
+          header="Intro"
+          body="Intro"
+        />
+      )}
       {panelContext.panelState === PANELS[1] && (
-        <>
-          {exchangeNameStatus === 'blank' && (
-            <button onClick={() => setExchangeNameStatus('edit')}>Set exchange name</button>
-          )}
-          {exchangeNameStatus === 'edit' && (
-            <form onSubmit={setExchangeHandler}>
-              <input type="text" placeholder="Group name…" value={exchangeNameInput} onChange={(e) => setExchangeNameInput(e.target.value)} />
-              <div>The name can be anything you like.</div>
-              <button type="submit"><CheckIcon style={{ height: '20px' }} /></button>
-              <button onClick={() => exchangeName === '' ? setExchangeNameStatus('blank') : setExchangeNameStatus('set')}><XMarkIcon style={{ height: '20px' }} /></button>
-            </form>
-          )}
-          {exchangeNameStatus === 'set' && (
-            <div fontSize="3xl" onClick={() => setExchangeNameStatus('edit')}>{exchangeName}</div>
-          )}
-          <div>Set contact info</div>
-          <form onSubmit={setContactHandler}>
-            <label>Contact name</label>
-            <input type="text" placeholder="Jane Doe" value={contactNameInput} onChange={(e) => setContactNameInput(e.target.value)} />
-            <div>This will be the person who can answer questions about this gift exchange.</div>
-            <label>Contact email</label>
-            <input type="email" placeholder="jane.doe@example.com" value={contactEmailInput} onChange={(e) => setContactEmailInput(e.target.value)} />
-            <div>Make sure this email is active.</div>
-            <button type="submit">Submit</button>
-          </form>
-        </>
+        <Panel
+          header="Settings"
+          body={
+            <div className="space-y-4">
+              <InputBox>
+                {exchangeNameStatus === 'blank' && (
+                  <Button
+                    icon={<QueueListIcon className={`w-${ICON_SIZE} h-${ICON_SIZE}`} />}
+                    label="Set group name"
+                    callback={() => setExchangeNameStatus('edit')}
+                    color="white"
+                  />
+                )}
+                {exchangeNameStatus === 'edit' && (
+                  <form onSubmit={setExchangeSubmitHandler}>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="groupName">Set group name</label>
+                      <div className="flex gap-2">
+                        <SmallButton
+                          type="submit"
+                          icon={<CheckIcon className={`w-4 h-4`} />}
+                          color="white"
+                        />
+                        <SmallButton
+                          icon={<XMarkIcon className={`w-4 h-4`} />}
+                          callback={(e) => setExchangeCancelHandler(e)}
+                          color="white"
+                        />
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      id="groupName"
+                      placeholder="Group name"
+                      value={exchangeNameInput}
+                      onChange={(e) => setExchangeNameInput(e.target.value)}
+                      className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                      autoFocus
+                    />
+                    <div className="text-slate-500 text-xs">The name can be anything you like.</div>
+                  </form>
+                )}
+                {exchangeNameStatus === 'set' && (
+                  <>
+                    <label htmlFor="groupName">Group name</label>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => setExchangeNameStatus('edit')}>
+                      {exchangeName}
+                    </div>
+                  </>
+                )}
+              </InputBox>
+              <InputBox>
+                {contactStatus === 'blank' && (
+                  <Button
+                    icon={<QueueListIcon className={`w-${ICON_SIZE} h-${ICON_SIZE}`} />}
+                    label="Set group contact person"
+                    callback={() => setContactStatus('edit')}
+                    color="white"
+                  />
+                )}
+                {contactStatus === 'edit' && (
+                  <form onSubmit={setContactHandler}>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="contactName">Set contact person</label>
+                      <div className="flex gap-2">
+                        <SmallButton
+                          type="submit"
+                          icon={<CheckIcon className={`w-4 h-4`} />}
+                          color="white"
+                        />
+                        <SmallButton
+                          icon={<XMarkIcon className={`w-4 h-4`} />}
+                          callback={() => contactName === contactEmail === '' ? setContactStatus('blank') : setContactStatus('set')}
+                          color="white"
+                        />
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      id="contactName"
+                      placeholder="Contact name"
+                      value={contactNameInput}
+                      onChange={(e) => setContactNameInput(e.target.value)}
+                      className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                      autoFocus
+                    />
+                    <div className="text-slate-500 text-xs">The person's name.</div>
+                    <input
+                      type="text"
+                      id="contactEmail"
+                      placeholder="Contact email"
+                      value={contactEmailInput}
+                      onChange={(e) => setContactEmailInput(e.target.value)}
+                      className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                    />
+                    <div className="text-slate-500 text-xs">Make sure this email is correct.</div>
+                  </form>
+                )}
+                {contactStatus === 'set' && (
+                  <>
+                    <label htmlFor="groupName">Group contact person</label>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => setContactStatus('edit')}>
+                      {contactName}
+                    </div>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => setContactStatus('edit')}>
+                      {contactEmail}
+                    </div>
+                  </>
+                )}
+              </InputBox>
+              {/* <div>Set contact info</div>
+              <form onSubmit={setContactHandler}>
+                <label>Contact name</label>
+                <input type="text" placeholder="Jane Doe" value={contactNameInput} onChange={(e) => setContactNameInput(e.target.value)} />
+                <div>This will be the person who can answer questions about this gift exchange.</div>
+                <label>Contact email</label>
+                <input type="email" placeholder="jane.doe@example.com" value={contactEmailInput} onChange={(e) => setContactEmailInput(e.target.value)} />
+                <div>Make sure this email is active.</div>
+                <button type="submit">Submit</button>
+              </form> */}
+            </div>
+          }
+        />
       )}
       {panelContext.panelState === PANELS[2] && (
         <>
