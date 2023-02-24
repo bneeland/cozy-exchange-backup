@@ -23,6 +23,7 @@ export default function App() {
   const [exchangeNameInput, setExchangeNameInput] = useState('')
   const [exchangeName, setExchangeName] = useState('')
   const [contactStatus, setContactStatus] = useState('blank')
+  const [contactEditIndex, setContactEditIndex] = useState(0)
   const [contactNameInput, setContactNameInput] = useState('')
   const [contactName, setContactName] = useState('')
   const [contactEmailInput, setContactEmailInput] = useState('')
@@ -194,7 +195,7 @@ export default function App() {
                       value={contactNameInput}
                       onChange={(e) => setContactNameInput(e.target.value)}
                       className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
-                      autoFocus
+                      autoFocus={contactEditIndex === 0}
                     />
                     <div className="text-slate-500 text-xs">The person's name.</div>
                     <input
@@ -204,6 +205,7 @@ export default function App() {
                       value={contactEmailInput}
                       onChange={(e) => setContactEmailInput(e.target.value)}
                       className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                      autoFocus={contactEditIndex === 1}
                     />
                     <div className="text-slate-500 text-xs">Make sure this email is correct.</div>
                   </form>
@@ -211,25 +213,15 @@ export default function App() {
                 {contactStatus === 'set' && (
                   <>
                     <label htmlFor="groupName">Group contact person</label>
-                    <div className="text-lg cursor-pointer my-2" onClick={() => setContactStatus('edit')}>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => {setContactStatus('edit'); setContactEditIndex(0)}}>
                       {contactName}
                     </div>
-                    <div className="text-lg cursor-pointer my-2" onClick={() => setContactStatus('edit')}>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => {setContactStatus('edit'); setContactEditIndex(1)}}>
                       {contactEmail}
                     </div>
                   </>
                 )}
               </InputBox>
-              {/* <div>Set contact info</div>
-              <form onSubmit={setContactHandler}>
-                <label>Contact name</label>
-                <input type="text" placeholder="Jane Doe" value={contactNameInput} onChange={(e) => setContactNameInput(e.target.value)} />
-                <div>This will be the person who can answer questions about this gift exchange.</div>
-                <label>Contact email</label>
-                <input type="email" placeholder="jane.doe@example.com" value={contactEmailInput} onChange={(e) => setContactEmailInput(e.target.value)} />
-                <div>Make sure this email is active.</div>
-                <button type="submit">Submit</button>
-              </form> */}
             </div>
           }
         />
