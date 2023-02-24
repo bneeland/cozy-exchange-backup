@@ -25,7 +25,7 @@ export default function Layout({ children }) {
               />
           ))}
         </div>
-        <div className="flex-1 flex flex-col overflow-hidden rounded-2xl bg-slate-100 border border-t-4">
+        <div className="flex-1 flex flex-col overflow-hidden rounded-2xl bg-slate-200 border border-t-4 border-slate-300">
           <div className="overflow-y-auto px-4 py-12">
             {children}
           </div>
