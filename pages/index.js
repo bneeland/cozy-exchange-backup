@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState, useContext } from 'react'
 import { getVectors } from '../helpers/assign'
 import { sendEmail } from '../helpers/sendEmail'
-import { CheckIcon, XMarkIcon, QueueListIcon } from '@heroicons/react/24/outline'
+import { CheckIcon, XMarkIcon, QueueListIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/outline'
 import { PanelContext } from './_app'
 import { PANELS } from '../helpers/constants'
 import Panel from '../components/ui/panel'
@@ -11,9 +11,9 @@ import Button from '../components/ui/button'
 import SmallButton from '../components/ui/smallButton'
 import { ICON_SIZE } from '../helpers/constants'
 
-const emptyPersonInput = { name: '', email: '' }
-const emptyRuleInput = { from: '', to: '', type: '' }
-const ruleTypes = [
+const EMPTY_PARTICIPANT_INPUT = { name: '', email: '' }
+const EMPTY_RULE_INPUT = { from: '', to: '', type: '' }
+const RULE_TYPES = [
   { id: 'inclusion', label: 'must give to' },
   { id: 'exclusion', label: 'must not give to' },
 ]
@@ -23,13 +23,18 @@ export default function App() {
   const [exchangeNameInput, setExchangeNameInput] = useState('')
   const [exchangeName, setExchangeName] = useState('')
   const [contactStatus, setContactStatus] = useState('blank')
+  const [contactUpdateIndex, setContactUpdateIndex] = useState(0)
   const [contactNameInput, setContactNameInput] = useState('')
   const [contactName, setContactName] = useState('')
   const [contactEmailInput, setContactEmailInput] = useState('')
   const [contactEmail, setContactEmail] = useState('')
-  const [personInput, setPersonInput] = useState(emptyPersonInput)
-  const [people, setPeople] = useState([])
-  const [ruleInput, setRuleInput] = useState(emptyRuleInput)
+  const [createParticipantStatus, setCreateParticipantStatus] = useState('blank')
+  const [participantInput, setParticipantInput] = useState(EMPTY_PARTICIPANT_INPUT)
+  const [participantUpdateIndex, setParticipantUpdateIndex] = useState(0)
+  const [participantUpdateInput, setParticipantUpdateInput] = useState(EMPTY_PARTICIPANT_INPUT)
+  const [participants, setParticipants] = useState([])
+  const [participantUpdateEmail, setParticipantUpdateEmail] = useState('')
+  const [ruleInput, setRuleInput] = useState(EMPTY_RULE_INPUT)
   const [rules, setRules] = useState([])
   const [messageInput, setMessageInput] = useState('')
   const [message, setMessage] = useState('')
@@ -43,27 +48,61 @@ export default function App() {
   }
 
   function setExchangeCancelHandler() {
-    exchangeName === '' ? setExchangeNameStatus('blank') : setExchangeNameStatus('set')
     setExchangeNameInput(exchangeName)
+    exchangeName === '' ? setExchangeNameStatus('blank') : setExchangeNameStatus('set')
   }
 
   function setContactHandler(e) {
     e.preventDefault()
+    contactNameInput === '' && contactEmailInput === '' ? setContactStatus('blank') : setContactStatus('set')
     setContactName(contactNameInput)
     setContactEmail(contactEmailInput)
-    setContactStatus('set')
   }
 
-  function createPersonHandler(e) {
+  function setContactCancelHandler() {
+    contactName === '' && contactEmail === '' ? setContactStatus('blank') : setContactStatus('set')
+    setContactNameInput(contactName)
+    setContactEmailInput(contactEmail)
+  }
+
+  async function createParticipantHandler(e) {
     e.preventDefault()
-    setPeople([...people, personInput])
-    setPersonInput(emptyPersonInput)
+    await setCreateParticipantStatus('blank')
+    setCreateParticipantStatus('update')
+    setParticipants([...participants, participantInput])
+    setParticipantInput(EMPTY_PARTICIPANT_INPUT)
+  }
+
+  function createParticipantCancelHandler() {
+    setCreateParticipantStatus('blank')
+    setParticipantInput(EMPTY_PARTICIPANT_INPUT)
+  }
+
+  function handleUpdateParticipant(participantEmail, fieldIndex) {
+    setParticipantUpdateEmail(participantEmail)
+    setParticipantUpdateInput(getParticipant(participantEmail))
+    setParticipantUpdateIndex(fieldIndex)
+  }
+
+  function updateParticipantHandler(e) {
+    e.preventDefault()
+    setParticipantUpdateEmail(null)
+    const _participants = participants.slice()
+    const participantIndex = _participants.indexOf(getParticipant(participantUpdateEmail))
+    _participants[participantIndex] = participantUpdateInput
+    setParticipants(_participants)
+    setParticipantUpdateInput(EMPTY_PARTICIPANT_INPUT)
+  }
+
+  function updateParticipantCancelHandler() {
+    setParticipantUpdateEmail(null)
+    setParticipantUpdateInput(EMPTY_PARTICIPANT_INPUT)
   }
 
   function createRuleHandler(e) {
     e.preventDefault()
     setRules([...rules, ruleInput])
-    setRuleInput(emptyRuleInput)
+    setRuleInput(EMPTY_RULE_INPUT)
   }
 
   function createMessageHandler(e) {
@@ -72,12 +111,12 @@ export default function App() {
     setMessageInput('')
   }
 
-  function getPerson(email) {
-    return people.find(person => person.email === email)
+  function getParticipant(email) {
+    return participants.find(participant => participant.email === email)
   }
 
   function assignHandler() {
-    const vectors = getVectors(people, rules)
+    const vectors = getVectors(participants, rules)
     if (vectors === -1) {
       console.log(`Can't generate matches that don't break any of the rules that have been set. Try making the rules less restrictive (hint: there's probably some kind of contradiction in the rules!).`)
     }
@@ -85,8 +124,8 @@ export default function App() {
       vectors.forEach(vector => {
         sendEmail(
           vector.from,
-          getPerson(vector.from).name,
-          getPerson(vector.to).name,
+          getParticipant(vector.from).name,
+          getParticipant(vector.to).name,
           exchangeName,
           contactName,
           contactEmail,
@@ -119,11 +158,11 @@ export default function App() {
                   <Button
                     icon={<QueueListIcon className={`w-${ICON_SIZE} h-${ICON_SIZE}`} />}
                     label="Set group name"
-                    callback={() => setExchangeNameStatus('edit')}
+                    callback={() => setExchangeNameStatus('update')}
                     color="white"
                   />
                 )}
-                {exchangeNameStatus === 'edit' && (
+                {exchangeNameStatus === 'update' && (
                   <form onSubmit={setExchangeSubmitHandler}>
                     <div className="flex items-center justify-between">
                       <label htmlFor="groupName">Set group name</label>
@@ -155,7 +194,7 @@ export default function App() {
                 {exchangeNameStatus === 'set' && (
                   <>
                     <label htmlFor="groupName">Group name</label>
-                    <div className="text-lg cursor-pointer my-2" onClick={() => setExchangeNameStatus('edit')}>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => setExchangeNameStatus('update')}>
                       {exchangeName}
                     </div>
                   </>
@@ -164,16 +203,16 @@ export default function App() {
               <InputBox>
                 {contactStatus === 'blank' && (
                   <Button
-                    icon={<QueueListIcon className={`w-${ICON_SIZE} h-${ICON_SIZE}`} />}
-                    label="Set group contact person"
-                    callback={() => setContactStatus('edit')}
+                    icon={<UserCircleIcon className={`w-${ICON_SIZE} h-${ICON_SIZE}`} />}
+                    label="Set group contact participant"
+                    callback={() => setContactStatus('update')}
                     color="white"
                   />
                 )}
-                {contactStatus === 'edit' && (
+                {contactStatus === 'update' && (
                   <form onSubmit={setContactHandler}>
                     <div className="flex items-center justify-between">
-                      <label htmlFor="contactName">Set contact person</label>
+                      <label htmlFor="contactName">Set contact person for this gift exchange</label>
                       <div className="flex gap-2">
                         <SmallButton
                           type="submit"
@@ -182,7 +221,7 @@ export default function App() {
                         />
                         <SmallButton
                           icon={<XMarkIcon className={`w-4 h-4`} />}
-                          callback={() => contactName === contactEmail === '' ? setContactStatus('blank') : setContactStatus('set')}
+                          callback={(e) => setContactCancelHandler(e)}
                           color="white"
                         />
                       </div>
@@ -194,9 +233,9 @@ export default function App() {
                       value={contactNameInput}
                       onChange={(e) => setContactNameInput(e.target.value)}
                       className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
-                      autoFocus
+                      autoFocus={contactUpdateIndex === 0}
                     />
-                    <div className="text-slate-500 text-xs">The person's name.</div>
+                    <div className="text-slate-500 text-xs">The contact person's name.</div>
                     <input
                       type="text"
                       id="contactEmail"
@@ -204,58 +243,148 @@ export default function App() {
                       value={contactEmailInput}
                       onChange={(e) => setContactEmailInput(e.target.value)}
                       className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                      autoFocus={contactUpdateIndex === 1}
                     />
                     <div className="text-slate-500 text-xs">Make sure this email is correct.</div>
                   </form>
                 )}
                 {contactStatus === 'set' && (
                   <>
-                    <label htmlFor="groupName">Group contact person</label>
-                    <div className="text-lg cursor-pointer my-2" onClick={() => setContactStatus('edit')}>
+                    <label htmlFor="groupName">Group contact participant</label>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => {setContactStatus('update'); setContactUpdateIndex(0)}}>
                       {contactName}
                     </div>
-                    <div className="text-lg cursor-pointer my-2" onClick={() => setContactStatus('edit')}>
+                    <div className="text-lg cursor-pointer my-2" onClick={() => {setContactStatus('update'); setContactUpdateIndex(1)}}>
                       {contactEmail}
                     </div>
                   </>
                 )}
               </InputBox>
-              {/* <div>Set contact info</div>
-              <form onSubmit={setContactHandler}>
-                <label>Contact name</label>
-                <input type="text" placeholder="Jane Doe" value={contactNameInput} onChange={(e) => setContactNameInput(e.target.value)} />
-                <div>This will be the person who can answer questions about this gift exchange.</div>
-                <label>Contact email</label>
-                <input type="email" placeholder="jane.doe@example.com" value={contactEmailInput} onChange={(e) => setContactEmailInput(e.target.value)} />
-                <div>Make sure this email is active.</div>
-                <button type="submit">Submit</button>
-              </form> */}
             </div>
           }
         />
       )}
       {panelContext.panelState === PANELS[2] && (
-        <>
-          <div size="lg">People</div>
-          <div>
-            {people.map(person => (
-              <div key={person.email}>
-                <div>{person.name}</div>
-                <div>{person.email}</div>
-              </div>
-            ))}
-          </div>
-          <div>Create person</div>
-          <form onSubmit={createPersonHandler}>
-            <label>Name</label>
-            <input type="text" placeholder="John Doe" value={personInput.name} onChange={(e) => setPersonInput({ ...personInput, name: e.target.value })} />
-            <div>Can be first name, or first and last name, or even a nickname.</div>
-            <label>Email address</label>
-            <input type="email" placeholder="john.doe@example.com" value={personInput.email} onChange={(e) => setPersonInput({ ...personInput, email: e.target.value })} />
-            <div>Make sure this is an active email address—this person will be getting his match at this address.</div>
-            <button type="submit">Submit</button>
-          </form>
-        </>
+        <Panel
+          header="Participants"
+          body={
+            <div className="space-y-4">
+              <InputBox>
+                {createParticipantStatus === 'blank' && (
+                  <Button
+                    icon={<UserPlusIcon className={`w-${ICON_SIZE} h-${ICON_SIZE}`} />}
+                    label="Add a participant"
+                    callback={() => setCreateParticipantStatus('update')}
+                    color="white"
+                  />
+                )}
+                {createParticipantStatus === 'update' && (
+                  <form onSubmit={createParticipantHandler}>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="participantName">Add participant</label>
+                      <div className="flex gap-2">
+                        <SmallButton
+                          type="submit"
+                          icon={<CheckIcon className={`w-4 h-4`} />}
+                          color="white"
+                        />
+                        <SmallButton
+                          icon={<XMarkIcon className={`w-4 h-4`} />}
+                          callback={(e) => createParticipantCancelHandler(e)}
+                          color="white"
+                        />
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      id="participantName"
+                      placeholder="Name"
+                      value={participantInput.name}
+                      onChange={(e) => setParticipantInput({ ...participantInput, name: e.target.value })}
+                      className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                      autoFocus
+                    />
+                    <div className="text-slate-500 text-xs">Can be an individual, a couple, a family, or a group. Either way, this will be treated as a single participant in the exchange.</div>
+                    <input
+                      type="text"
+                      id="participantEmail"
+                      placeholder="Email"
+                      value={participantInput.email}
+                      onChange={(e) => setParticipantInput({ ...participantInput, email: e.target.value })}
+                      className="border-0 bg-transparent w-full my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                    />
+                    <div className="text-slate-500 text-xs">Provide one valid email for the participant or participant group.</div>
+                  </form>
+                )}
+              </InputBox>
+              {participants.length > 0 && <InputBox>
+                <div className="flex flex-col gap-2">
+                  {participants.map(participant => (
+                    participantUpdateEmail === participant.email ? (
+                      <div key={participant.email}>
+                        <form onSubmit={updateParticipantHandler}>
+                          <div
+                            className="cursor-pointer flex items-center"
+                          >
+                            <input
+                              type="text"
+                              id="participantName"
+                              placeholder="Name"
+                              value={participantUpdateInput.name}
+                              onChange={(e) => setParticipantUpdateInput({ ...participantUpdateInput, name: e.target.value })}
+                              className="border-0 bg-transparent w-4/12 my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                              autoFocus={participantUpdateIndex === 0}
+                            />
+                            <input
+                              type="text"
+                              id="participantEmail"
+                              placeholder="Email"
+                              value={participantUpdateInput.email}
+                              onChange={(e) => setParticipantUpdateInput({ ...participantUpdateInput, email: e.target.value })}
+                              className="border-0 bg-transparent w-6/12 my-2 outline-none text-xl placeholder:text-slate-400 border-b"
+                              autoFocus={participantUpdateIndex === 1}
+                            />
+                            <div className="flex gap-2 justify-end w-2/12">
+                              <SmallButton
+                                type="submit"
+                                icon={<CheckIcon className={`w-4 h-4`} />}
+                                color="white"
+                              />
+                              <SmallButton
+                                icon={<XMarkIcon className={`w-4 h-4`} />}
+                                callback={(e) => updateParticipantCancelHandler(e)}
+                                color="white"
+                              />
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    ) : (
+                        <div
+                          key={participant.email}
+                          className="cursor-pointer flex items-center"
+                        >
+                          <div
+                            className="w-4/12 text-lg"
+                            onClick={() => handleUpdateParticipant(participant.email, 0)}
+                          >
+                            {participant.name}
+                          </div>
+                          <div
+                            className="w-6/12"
+                            onClick={() => handleUpdateParticipant(participant.email, 1)}
+                          >
+                            {participant.email}
+                          </div>
+                          <div className="w-2/12" />
+                        </div>
+                    )
+                  ))}
+                </div>
+              </InputBox>}
+            </div>
+          }
+        />
       )}
       {panelContext.panelState === PANELS[3] && (
         <>
@@ -272,21 +401,21 @@ export default function App() {
           <div>Create rule</div>
           <form onSubmit={createRuleHandler}>
             <label>From</label>
-            <select placeholder="Select a person" value={ruleInput.from} onChange={(e) => setRuleInput({ ...ruleInput, from: e.target.value })}>
-              {people.map(person => (
-                <option value={person.email} key={person.email}>{person.name}</option>
+            <select placeholder="Select a participant" value={ruleInput.from} onChange={(e) => setRuleInput({ ...ruleInput, from: e.target.value })}>
+              {participants.map(participant => (
+                <option value={participant.email} key={participant.email}>{participant.name}</option>
               ))}
             </select>
             <label>To</label>
-            <select placeholder="Select a person" value={ruleInput.to} onChange={(e) => setRuleInput({ ...ruleInput, to: e.target.value })}>
-              {people.map(person => (
-                <option value={person.email} key={person.email}>{person.name}</option>
+            <select placeholder="Select a participant" value={ruleInput.to} onChange={(e) => setRuleInput({ ...ruleInput, to: e.target.value })}>
+              {participants.map(participant => (
+                <option value={participant.email} key={participant.email}>{participant.name}</option>
               ))}
             </select>
             <label>Type</label>
             <select placeholder="Select a type" value={ruleInput.type} onChange={(e) => setRuleInput({ ...ruleInput, type: e.target.value })}>
-              {ruleTypes.map(ruleTypes => (
-                <option value={ruleTypes.id} key={ruleTypes.id}>{ruleTypes.label}</option>
+              {RULE_TYPES.map(ruleType => (
+                <option value={ruleType.id} key={ruleType.id}>{ruleType.label}</option>
               ))}
             </select>
             <button type="submit">Submit</button>
