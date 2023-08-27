@@ -138,7 +138,7 @@ export default function App() {
   return (
     <>
       <Head>
-        <title>Exchanging.gifts - App</title>
+        <title>cozy.exchange</title>
         <meta name="description" content="Draw names for a gift exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -1,11 +1,4 @@
-# Exchanging.gifts
+# cozy.exchange
 
-## Technologies
-
-Next.js framework (React).
-
-Chakra UI components and styles.
-
-Postmark email service via API (requires API key).
-
-Deployed on Vercel.
+> Easily set up a gift exchange.
+> Randomly assigns people and sends secret emails to tell each person who they're assigned to.
